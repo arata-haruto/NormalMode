@@ -4,13 +4,19 @@
 
 class Player : public GameObject {
 private:
-    static Player* instance;
+    //static Player* instance;
 
+    enum class PlayerID {
+        Player1,
+        Player2
+    };
+
+    PlayerID playerID;
     int attack_power;
 
     int selectedPartIndex;
 public:
-    Player();
+    Player(PlayerID id);
     virtual ~Player();
 
     virtual void Initialize() override;
@@ -18,6 +24,6 @@ public:
     virtual void Draw() const override;
 
     void Attack(Enemy* target);
-    static Player* GetInstance();
+   //static Player* GetInstance();
 
 };

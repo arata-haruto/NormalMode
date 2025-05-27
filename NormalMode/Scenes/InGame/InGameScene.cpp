@@ -2,10 +2,8 @@
 #include "../../Utility/InputManager.h"
 #include "../../Utility/ResourceManager.h"
 #include "../../Utility/Vector2D.h"
-//#include "../../Utility/Collision.h"
 #include "../../Objects/Enemy/Enemy.h"
 #include "../../Objects/Player/Player.h"
-//#include"../../Objects/Effect/Sord.h"
 #include <fstream>
 
 //#define DEBUG_MODE		(0)

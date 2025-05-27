@@ -2,9 +2,10 @@
 #include "../../Utility/ResourceManager.h"
 #include "../../Utility/InputManager.h"
 #include "../Enemy/Enemy.h"
+#include "../TurnManager.h"
 #include "DxLib.h"
 
-Player::Player() : attack_power(20), selectedPartIndex(0)
+Player::Player(PlayerID id) : playerID(id), attack_power(20), selectedPartIndex(0)
 {
 }
 
@@ -18,15 +19,24 @@ void Player::Initialize()
 }
 
 void Player::Update() {
+    TurnManager* turnManager = TurnManager::GetInstance();
     InputManager* input = InputManager::GetInstance();
 
-    if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed ||
-        input->GetButtonState(XINPUT_BUTTON_B) == eInputState::Pressed)
+    // 自分のターンかチェック
+    if ((playerID == PlayerID::Player1 && turnManager->GetCurrentTurn() != Turn::Player1) ||
+        (playerID == PlayerID::Player2 && turnManager->GetCurrentTurn() != Turn::Player2))
     {
-        Enemy::GetInstance()->TakeDamage(20);
-        printfDx("Enemyに攻撃！\n");
+        return; // 自分のターンじゃない
     }
-    
+
+    // 攻撃入力
+    if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
+        Enemy::GetInstance()->TakeDamage(20);
+        printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
+
+        // ターン終了
+        turnManager->NextTurn();
+    }
 }
 
 void Player::Draw() const {

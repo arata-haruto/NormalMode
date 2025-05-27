@@ -141,6 +141,7 @@
     <ClCompile Include="Scenes\Result\ResultScene.cpp" />
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Title\TitleScene.cpp" />
+    <ClCompile Include="Objects\TurnManager.cpp" />
     <ClCompile Include="Utility\Application.cpp" />
     <ClCompile Include="Utility\Collision.cpp" />
     <ClCompile Include="Utility\InputManager.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Scenes\SceneFactory.h" />
     <ClInclude Include="Scenes\SceneManager.h" />
     <ClInclude Include="Scenes\Title\TitleScene.h" />
+    <ClInclude Include="Objects\TurnManager.h" />
     <ClInclude Include="Utility\Application.h" />
     <ClInclude Include="Utility\Collision.h" />
     <ClInclude Include="Utility\InputManager.h" />
