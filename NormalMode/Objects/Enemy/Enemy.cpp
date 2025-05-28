@@ -23,9 +23,9 @@ void Enemy::Initialize() {
     DrawString(100, 100, "‰æ‘œ‚Ì“Ç‚İ‚İ‚É¸”s‚µ‚Ü‚µ‚½", GetColor(255, 0, 0));
 }
 
-   bodyParts.emplace_back("Head", Vector2D(305, 60), 32, 32);
-   bodyParts.emplace_back("Body", Vector2D(305, 180), 32, 48);
-   bodyParts.emplace_back("Legs", Vector2D(305, 450), 32, 32);
+   bodyParts.emplace_back("Head", Vector2D(295, 60), 52, 52);
+   bodyParts.emplace_back("Body", Vector2D(295, 180), 52, 58);
+   bodyParts.emplace_back("Legs", Vector2D(295, 420), 52, 52);
 }
 
 void Enemy::Update() {
@@ -40,10 +40,10 @@ void Enemy::Update() {
     }
 
     // UŒ‚ˆ—
-    if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
+   /* if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
         TakeDamage(10);
         printfDx("%s‚ÉUŒ‚I Enemy HP: %d\n", bodyParts[selectedPartIndex].GetName().c_str(), hit_point);
-    }
+    }*/
 }
 
 void Enemy::Draw() const {

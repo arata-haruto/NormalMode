@@ -11,21 +11,17 @@ private:
 	bool start_flg;
 	bool pause_flg;
 	//Player* p;
-
+	Player* player1;
+	Player* player2;
 
 	/*std::vector<int> UI_num;
 	std::vector<int> UI_string;
 	std::vector<int>UI_time;*/
 	int num_image;
 	int num_time;
-	int num_world;
-	int time_set;
-	int time_add;
-	int now_count;
 	int back_ground_image;	//”wŒi‰æ‘œ
 
 
-	int mainbgm;//ƒQ[ƒ€ƒƒCƒ“‚ÌBG‚l
 
 public:
 	virtual void Initialize() override;
@@ -36,8 +32,6 @@ public:
 	//virtual void CheckCollision(GameObject* target, GameObject* partner) override;
 
 private:
-	void LoadStageMapCSV();
-	void DrawBackGroundCSV() const;
 	void DeleteObject();
 };
 

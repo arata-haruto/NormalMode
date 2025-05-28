@@ -4,6 +4,7 @@
 #include "../../Utility/Vector2D.h"
 #include "../../Objects/Enemy/Enemy.h"
 #include "../../Objects/Player/Player.h"
+#include "../../Objects/TurnManager.h"
 #include <fstream>
 
 //#define DEBUG_MODE		(0)
@@ -22,14 +23,15 @@ void InGameScene::Initialize()
 
 	start_flg = true;
 
-	DrawBackGroundCSV();
+	player1 = new Player(Player::PlayerID::Player1);
+	player2 = new Player(Player::PlayerID::Player2);
 
+	player1->Initialize();
+	player2->Initialize();
 	//LoadStageMapCSV();
 
 	//SEを読み込む
 	//mainbgm = rm->GetSoundResource("Resource/Sounds/BGM/mainbgm.mp3");
-	ChangeVolumeSoundMem(150, mainbgm);
-	PlaySoundMem(mainbgm, DX_PLAYTYPE_LOOP);
 }
 
 eSceneType InGameScene::Update(float delta_second)
@@ -45,7 +47,15 @@ eSceneType InGameScene::Update(float delta_second)
 	// Enemyの更新
 	Enemy::GetInstance()->Update();
 	//Player::GetInstance()->Update();
+	TurnManager* turnManager = TurnManager::GetInstance();
+	Turn currentTurn = turnManager->GetCurrentTurn();
 
+	if (currentTurn == Turn::Player1 && player1) {
+		player1->Update();
+	}
+	else if (currentTurn == Turn::Player2 && player2) {
+		player2->Update();
+	}
 		__super::Update(delta_second);
 
 	return GetNowSceneType();
@@ -64,12 +74,29 @@ void InGameScene::Draw() const
 	DrawFormatString(10, 10, GetColor(255, 255, 255), "インゲームシーン");
 	DrawFormatString(70, 360, GetColor(255, 255, 255), "UI");
 
+	// ターン情報表示
+	TurnManager* turnManager = TurnManager::GetInstance();
+	Turn currentTurn = turnManager->GetCurrentTurn();
+
+	const char* turnText = (currentTurn == Turn::Player1) ? "1P" : "2P";
+
+	DrawFormatString(10, 50, GetColor(255, 255, 0), "Turn: %s", turnText);
+
 	__super::Draw();
 }
 
 void InGameScene::Finalize()
 {
 	player = nullptr;
+
+	if (player1) {
+		delete player1;
+		player1 = nullptr;
+	}
+	if (player2) {
+		delete player2;
+		player2 = nullptr;
+	}
 
 	// 動的配列の解放
 }
@@ -78,11 +105,3 @@ eSceneType InGameScene::GetNowSceneType() const
 {
 	return eSceneType::eInGame;
 }
-
-
-
-void InGameScene::DrawBackGroundCSV() const
-{
-
-}
-

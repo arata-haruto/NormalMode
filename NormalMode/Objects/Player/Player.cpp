@@ -31,7 +31,7 @@ void Player::Update() {
 
     // 攻撃入力
     if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
-        Enemy::GetInstance()->TakeDamage(20);
+        Enemy::GetInstance()->TakeDamage(10);
         printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
 
         // ターン終了
