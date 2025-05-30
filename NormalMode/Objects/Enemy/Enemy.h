@@ -14,6 +14,7 @@ private:
     int attack_power;
     bool is_destroyed;
     int image;
+
 public:
     Enemy();
     virtual ~Enemy();

@@ -3,6 +3,7 @@
 #include "../../Utility/InputManager.h"
 #include "BodyPart.h"
 #include "../Player/Player.h"
+#include "../TurnManager.h"
 #include "DxLib.h"
 
 Enemy* Enemy::instance = nullptr;
@@ -30,12 +31,23 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
     InputManager* input = InputManager::GetInstance();
+    TurnManager* turnManager = TurnManager::GetInstance();
+
+
+    // ターン切り替え演出中は操作できない
+    if (turnManager->ShowTurnMessage()) {
+        return;
+    }
 
     // 部位選択（←→キー）
-    if (input->GetKeyState(KEY_INPUT_LEFT) == eInputState::Pressed) {
+    if (input->GetKeyState(KEY_INPUT_UP) == eInputState::Pressed ||
+        input->GetButtonState(XINPUT_BUTTON_DPAD_UP) == eInputState::Pressed)
+    {
         SelectPreviousPart();
     }
-    else if (input->GetKeyState(KEY_INPUT_RIGHT) == eInputState::Pressed) {
+    else if (input->GetKeyState(KEY_INPUT_DOWN) == eInputState::Pressed ||
+        input->GetButtonState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::Pressed)
+    {
         SelectNextPart();
     }
 

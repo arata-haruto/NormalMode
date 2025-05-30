@@ -13,7 +13,8 @@ private:
     PlayerID playerID;
     int attack_power;
     int selectedPartIndex;
-
+    int healCount = 1;
+    int passCount = 1;
 public:
     Player(PlayerID id);
     virtual ~Player();
@@ -21,6 +22,7 @@ public:
     virtual void Initialize() override;
     virtual void Update() override;
     virtual void Draw() const override;
+
 
     void Attack(Enemy* target);
 };

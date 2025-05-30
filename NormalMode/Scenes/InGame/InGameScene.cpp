@@ -38,17 +38,20 @@ eSceneType InGameScene::Update(float delta_second)
 {
 	InputManager* input = InputManager::GetInstance();
 
-	if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
+	/*if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
 		input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
 	{
 		return eSceneType::eTitle;
-	}
+	}*/
 
 	// Enemyの更新
 	Enemy::GetInstance()->Update();
 	//Player::GetInstance()->Update();
 	TurnManager* turnManager = TurnManager::GetInstance();
 	Turn currentTurn = turnManager->GetCurrentTurn();
+
+
+	turnManager->Update(delta_second);
 
 	if (currentTurn == Turn::Player1 && player1) {
 		player1->Update();
@@ -82,7 +85,21 @@ void InGameScene::Draw() const
 
 	DrawFormatString(10, 50, GetColor(255, 255, 0), "Turn: %s", turnText);
 
-	__super::Draw();
+	if (turnManager->ShowTurnMessage()) {
+		const std::string& msg = turnManager->GetTurnMessage();
+
+		// 画面中央にテキスト表示
+		int screenWidth = 640;
+		int screenHeight = 480;
+
+		int textX = screenWidth / 2 - 80;
+		int textY = screenHeight / 2 - 20;
+
+		DrawBox(textX - 10, textY - 10, textX + 200, textY + 40, GetColor(0, 0, 0), TRUE);
+		DrawString(textX, textY, msg.c_str(), GetColor(255, 255, 255));
+
+		__super::Draw();
+	}
 }
 
 void InGameScene::Finalize()

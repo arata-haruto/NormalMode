@@ -29,14 +29,43 @@ void Player::Update() {
         return; // 自分のターンじゃない
     }
 
-    // 攻撃入力
-    if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
+    // ターン切り替え演出中は操作できない
+    if (turnManager->ShowTurnMessage()) {
+        return;
+    }
+
+    // 攻撃
+    if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed ||
+        input->GetButtonState(XINPUT_BUTTON_B) == eInputState::Pressed)
+    {
         Enemy::GetInstance()->TakeDamage(10);
         printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
 
         // ターン終了
         turnManager->NextTurn();
     }
+
+    //回復
+    if (healCount > 0 &&
+       (input->GetKeyState(KEY_INPUT_X) == eInputState::Pressed ||
+        input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)) 
+    {
+
+        Enemy::GetInstance()->Heal(40);
+        healCount --;
+        turnManager->NextTurn();
+    }
+
+    //パス
+    if (passCount > 0 &&
+        (input->GetKeyState(KEY_INPUT_C) == eInputState::Pressed ||
+            input->GetButtonState(XINPUT_BUTTON_X) == eInputState::Pressed))
+    {
+        passCount --;
+        // ターン終了
+        turnManager->NextTurn();
+    }
+
 }
 
 void Player::Draw() const {
