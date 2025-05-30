@@ -30,8 +30,6 @@ void Enemy::Initialize() {
 
    //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
 
-   effectActive = false;
-   alphaValue = 255;
 }
 
 void Enemy::Update() {
@@ -78,16 +76,6 @@ void Enemy::Draw() const {
 
         DrawFormatString(400, 50, GetColor(255, 255, 255), "HP: %d", hit_point);
 
-        // 攻撃エフェクトを描画（パーツが選択されていれば）
-        if (effectActive) {
-            const auto& targetPart = bodyParts[selectedPartIndex];
-
-            SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaValue); // 透明度調整
-            DrawGraph(targetPart.GetPosition().x, targetPart.GetPosition().y, attack_effect_image, TRUE);
-            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-           
-        }
     }
 
 }
@@ -115,6 +103,14 @@ void Enemy::SelectNextPart() {
 
 void Enemy::SelectPreviousPart() {
     selectedPartIndex = (selectedPartIndex - 1 + bodyParts.size()) % bodyParts.size();
+}
+
+Vector2D Enemy::GetSelectedPartPosition() const
+{
+    if (selectedPartIndex < 0 || selectedPartIndex >= bodyParts.size())
+        return Vector2D(0, 0);
+
+    return bodyParts[selectedPartIndex].GetPosition();
 }
 
 void Enemy::Heal(int amount) {

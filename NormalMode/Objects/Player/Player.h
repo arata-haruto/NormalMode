@@ -26,6 +26,18 @@ private:
     int attack_sound;
     int beep_sound;
 
+    int effect_image = -1; // エフェクト画像
+    bool isHealEffectPlaying = false;
+    int healEffectTimer = 0;
+    int healEffectFrame = 0;
+    Vector2D healEffectPosition = { 0, 0 }; // 描画位置
+
+    int attack_effect_image = -1;
+    bool isAttackEffectPlaying = false;
+    int attackEffectFrame = 0;
+    int attackEffectTimer = 0;
+    Vector2D attackEffectPosition;
+
 public:
     Player(PlayerID id);
     virtual ~Player();

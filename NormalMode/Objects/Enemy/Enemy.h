@@ -40,7 +40,7 @@ public:
     int GetHitPoint() const;
     void SelectNextPart();
     void SelectPreviousPart();
-
+    Vector2D GetSelectedPartPosition() const;
     static Enemy* GetInstance();
 };
 

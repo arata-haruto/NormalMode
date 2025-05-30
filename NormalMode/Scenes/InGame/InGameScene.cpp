@@ -72,6 +72,8 @@ void InGameScene::Draw() const
 	// Enemyの描画
 	Enemy::GetInstance()->Draw();
 
+	if (player1) player1->Draw();
+	if (player2) player2->Draw();
 	//Player::GetInstance()->Draw();
 
 	//DrawFormatString(10, 10, GetColor(255, 255, 255), "インゲームシーン");

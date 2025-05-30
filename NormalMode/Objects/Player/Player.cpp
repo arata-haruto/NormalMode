@@ -23,6 +23,9 @@ void Player::Initialize()
     attack_sound = rm->GetSoundResource("Resource/Sound/剣で斬る2.wav");
     beep_sound = rm->GetSoundResource("Resource/Sound/ビープ音1.wav");
 
+    effect_image = rm->GetImageResource("Resource/Images/pipo-mapeffect008.png")[0];
+    attack_effect_image = rm->GetImageResource("Resource/Images/tor_斬撃_直線.png")[0];
+
    /* heal_image = rm->GetImageResource("Resource/Images/healcount.png")[0];
     pass_image = rm->GetImageResource("Resource/Images/passcount.png")[0];*/
 }
@@ -30,6 +33,39 @@ void Player::Initialize()
 void Player::Update() {
     TurnManager* turnManager = TurnManager::GetInstance();
     InputManager* input = InputManager::GetInstance();
+
+    if (isHealEffectPlaying)
+    {
+        healEffectTimer++;
+        if (healEffectTimer % 5 == 0)
+        {
+            healEffectFrame++;
+            if (healEffectFrame >= 10) // 全フレーム再生完了
+            {
+                isHealEffectPlaying = false;
+
+                TurnManager::GetInstance()->NextTurn();
+
+            }
+        }
+        return;
+    }
+
+    if (isAttackEffectPlaying)
+    {
+        attackEffectTimer++;
+        if (attackEffectTimer % 5 == 0)
+        {
+            attackEffectFrame++;
+            if (attackEffectFrame >= 10) // フレーム数に合わせて調整
+            {
+                isAttackEffectPlaying = false;
+
+                TurnManager::GetInstance()->NextTurn(); // エフェクト終了後にターン進行
+            }
+        }
+        return; // エフェクト再生中は操作禁止
+    }
 
     // 自分のターンかチェック
     if ((playerID == PlayerID::Player1 && turnManager->GetCurrentTurn() != Turn::Player1) ||
@@ -63,16 +99,63 @@ void Player::Update() {
     {
         Enemy::GetInstance()->TakeDamage(10);
         //printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
+        // 攻撃エフェクトを開始
+        isAttackEffectPlaying = true;
+        attackEffectFrame = 0;
+        attackEffectTimer = 0;
+
+        // 選択中のパーツの位置を取得してセット
+        attackEffectPosition = Enemy::GetInstance()->GetSelectedPartPosition();
         PlaySoundMem(attack_sound, DX_PLAYTYPE_BACK);
-        Sleep(500); // 0.5秒待機
-        // ターン終了
-        turnManager->NextTurn();
+        
+      
     }
 
 }
 
 void Player::Draw() const {
     
+    if (isHealEffectPlaying)
+    {
+        const int frameWidth = 240;  // 1フレームの横幅
+        const int frameHeight = 480; // 1フレームの高さ
+        const int columns = 10;      // 横に10個フレームが並んでいる
+
+        int fx = (healEffectFrame % columns) * frameWidth;
+        int fy = 0;
+        /*int fx = (healEffectFrame % columns) * frameWidth;
+        int fy = 0;*/
+
+        DrawRectGraph(
+            static_cast<int>(healEffectPosition.x),
+            static_cast<int>(healEffectPosition.y),
+            fx, fy,
+            frameWidth, frameHeight,
+            effect_image,
+            TRUE
+        );
+    }
+
+    if (isAttackEffectPlaying)
+    {
+        const int frameWidth = 192;
+        const int frameHeight = 192; 
+
+        int columns = 5; 
+
+        int fx = (attackEffectFrame % columns) * frameWidth;
+        int fy = 0;
+
+        DrawRectGraph(
+            static_cast<int>(attackEffectPosition.x),
+            static_cast<int>(attackEffectPosition.y),
+            fx, fy,
+            frameWidth, frameHeight,
+            attack_effect_image,
+            TRUE
+        );
+    }
+
     __super::Draw();
 }
 
@@ -81,9 +164,15 @@ void Player::Heal(int amount)
     if (healCount > 0) { // 残り回数チェック
         Enemy::GetInstance()->Heal(40); // プレイヤーのHP回復
         PlaySoundMem(heal_sound, DX_PLAYTYPE_BACK);
+
+        // エフェクト演出
+        isHealEffectPlaying = true;
+        healEffectTimer = 0;
+        healEffectFrame = 0;
+        healEffectPosition = {205, 40};
+
         healCount--;
-        Sleep(500); // 0.5秒待機
-        TurnManager::GetInstance()->NextTurn();
+        
         //printfDx("Player %d が回復！ 残り %d 回\n", playerID == PlayerID::Player1 ? 1 : 2, healCount);
     }
     else {
