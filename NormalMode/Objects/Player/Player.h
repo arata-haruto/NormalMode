@@ -26,12 +26,6 @@ private:
     int attack_sound;
     int beep_sound;
 
-    int effect_image;
-    int effectActive;
-    int alphaValue;
-    int effectX;
-    int effectY;
-
 public:
     Player(PlayerID id);
     virtual ~Player();
@@ -42,9 +36,6 @@ public:
 
     void Heal(int amount);
     void Pass();
-
-    //void AttackEffect();
-    void HealEffect();
 
     int GetPassCount() const 
     { return passCount; }

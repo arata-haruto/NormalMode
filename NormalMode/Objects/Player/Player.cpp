@@ -23,8 +23,6 @@ void Player::Initialize()
     attack_sound = rm->GetSoundResource("Resource/Sound/剣で斬る2.wav");
     beep_sound = rm->GetSoundResource("Resource/Sound/ビープ音1.wav");
 
-    effect_image = rm->GetImageResource("Resource/Images/tor_kaifuku.png")[0];
-
    /* heal_image = rm->GetImageResource("Resource/Images/healcount.png")[0];
     pass_image = rm->GetImageResource("Resource/Images/passcount.png")[0];*/
 }
@@ -66,7 +64,6 @@ void Player::Update() {
         Enemy::GetInstance()->TakeDamage(10);
         //printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
         PlaySoundMem(attack_sound, DX_PLAYTYPE_BACK);
-        //AttackEffect();
         Sleep(500); // 0.5秒待機
         // ターン終了
         turnManager->NextTurn();
@@ -84,7 +81,6 @@ void Player::Heal(int amount)
     if (healCount > 0) { // 残り回数チェック
         Enemy::GetInstance()->Heal(40); // プレイヤーのHP回復
         PlaySoundMem(heal_sound, DX_PLAYTYPE_BACK);
-        HealEffect();
         healCount--;
         Sleep(500); // 0.5秒待機
         TurnManager::GetInstance()->NextTurn();
@@ -108,25 +104,4 @@ void Player::Pass()
     else {
         PlaySoundMem(beep_sound, DX_PLAYTYPE_BACK); // 使用不可の通知音
     }
-}
-
-//void Player::AttackEffect()
-//{
-//    effect_image = LoadGraph("Resource/Effects/slash.png");
-//    effectActive = true;
-//    alphaValue = 255;
-//    effectX =  + 30;
-//    effectY =  - 10;
-//}
-
-void Player::HealEffect()
-{
-    int screenWidth = 640;
-    int screenHeight = 480;
-
-    effectActive = true;
-    alphaValue = 255;
-
-    effectX = screenWidth / 2 - 32;
-    effectY = screenHeight / 2 - 32;
 }
