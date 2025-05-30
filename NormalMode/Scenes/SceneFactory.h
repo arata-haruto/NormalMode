@@ -21,8 +21,8 @@ public:
 		case eSceneType::eHelp:
 			return dynamic_cast<SceneBase*>(new HelpScene());
 
-		/*case eSceneType::eResult:
-			return dynamic_cast<SceneBase*>(new ResultScene());*/
+		case eSceneType::eResult:
+			return dynamic_cast<SceneBase*>(new ResultScene());
 
 		default:
 			return nullptr;

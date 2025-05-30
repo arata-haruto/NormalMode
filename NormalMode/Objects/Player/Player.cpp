@@ -97,7 +97,11 @@ void Player::Update() {
     if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed ||
         input->GetButtonState(XINPUT_BUTTON_B) == eInputState::Pressed)
     {
-        Enemy::GetInstance()->TakeDamage(10);
+        Enemy* enemy = Enemy::GetInstance();
+
+        int damage = enemy->GetSelectedPartDamage();  // これを用意する
+
+        enemy->TakeDamage(damage);
         //printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
         // 攻撃エフェクトを開始
         isAttackEffectPlaying = true;

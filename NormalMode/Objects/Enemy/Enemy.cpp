@@ -24,9 +24,9 @@ void Enemy::Initialize() {
     DrawString(100, 100, "画像の読み込みに失敗しました", GetColor(255, 0, 0));
 }
 
-   bodyParts.emplace_back("Head", Vector2D(295, 60), 52, 52);
-   bodyParts.emplace_back("Body", Vector2D(295, 180), 52, 58);
-   bodyParts.emplace_back("Legs", Vector2D(295, 420), 52, 52);
+   bodyParts.emplace_back("Head", Vector2D(295, 60), 52, 52, 10, 20);  // 高ダメージ
+   bodyParts.emplace_back("Body", Vector2D(295, 180), 52, 58, 7, 12);   // 中ダメージ
+   bodyParts.emplace_back("Legs", Vector2D(295, 420), 52, 52, 1, 6);   // 低ダメージ
 
    //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
 
@@ -110,12 +110,26 @@ Vector2D Enemy::GetSelectedPartPosition() const
     if (selectedPartIndex < 0 || selectedPartIndex >= bodyParts.size())
         return Vector2D(0, 0);
 
-    return bodyParts[selectedPartIndex].GetPosition();
+    const BodyPart& part = bodyParts[selectedPartIndex];
+
+    // パーツの中心を取得
+    Vector2D center = part.GetPosition() + Vector2D(part.GetWidth() / 2, part.GetHeight() / 2);
+
+    Vector2D effectOffset = Vector2D(192 / 2, 192 / 2);
+
+    return center - effectOffset;
 }
 
 void Enemy::Heal(int amount) {
     hit_point += amount;
     if (hit_point > 100) { hit_point = 100; }
+}
+
+int Enemy::GetSelectedPartDamage() const {
+    if (selectedPartIndex < 0 || selectedPartIndex >= bodyParts.size())
+        return 0;
+
+    return bodyParts[selectedPartIndex].GetRandomDamage();
 }
 
 Enemy* Enemy::GetInstance() {

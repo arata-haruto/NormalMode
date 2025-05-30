@@ -46,6 +46,7 @@ public:
     virtual void Update() override;
     virtual void Draw() const override;
 
+    void Attack();
     void Heal(int amount);
     void Pass();
 
@@ -54,5 +55,5 @@ public:
     int GetHealCount() const 
     { return healCount; }
 
-    void Attack(Enemy* target);
+    bool IsDestroyed() const;
 };

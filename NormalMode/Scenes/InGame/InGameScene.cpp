@@ -1,4 +1,6 @@
 #include "InGameScene.h"
+#include "../Result/ResultScene.h"
+#include "../SceneFactory.h"
 #include "../../Utility/InputManager.h"
 #include "../../Utility/ResourceManager.h"
 #include "../../Utility/Vector2D.h"
@@ -50,6 +52,11 @@ eSceneType InGameScene::Update(float delta_second)
 	TurnManager* turnManager = TurnManager::GetInstance();
 	Turn currentTurn = turnManager->GetCurrentTurn();
 
+
+	if (Enemy::GetInstance()->IsDestroyed())
+	{
+		return eSceneType::eResult;
+	}
 
 	turnManager->Update(delta_second);
 

@@ -41,6 +41,9 @@ public:
     void SelectNextPart();
     void SelectPreviousPart();
     Vector2D GetSelectedPartPosition() const;
-    static Enemy* GetInstance();
-};
 
+    int GetSelectedPartDamage() const;
+
+    static Enemy* GetInstance();
+
+};
