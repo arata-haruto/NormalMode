@@ -15,6 +15,13 @@ private:
     bool is_destroyed;
     int image;
 
+    int attack_effect_image;
+    int effectActive;
+    int alphaValue;
+    int effectX;
+    int effectY;
+
+
 public:
     Enemy();
     virtual ~Enemy();
@@ -26,6 +33,8 @@ public:
 
     void TakeDamage(int attack_power);
     void Heal(int amount);
+
+    void AttackEffect();
 
     bool IsDestroyed() const;
     int GetHitPoint() const;

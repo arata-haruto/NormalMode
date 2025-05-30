@@ -12,8 +12,6 @@
 void InGameScene::Initialize()
 {
 	Enemy::GetInstance()->Initialize();
-	//Player::GetInstance()->Initialize();
-
 	// 背景画像の読み込み
 	ResourceManager* rm = ResourceManager::GetInstance();
 	std::vector<int> tmp;
@@ -21,6 +19,8 @@ void InGameScene::Initialize()
 
 	back_ground_image = rm->GetImageResource("Resource/Images/concrete-closed-room02.jpg")[0];
 
+	pass_icon_image = rm->GetImageResource("Resource/Images/pass.png")[0];
+	heal_icon_image = rm->GetImageResource("Resource/Images/heal.png")[0];
 	start_flg = true;
 
 	player1 = new Player(Player::PlayerID::Player1);
@@ -74,8 +74,7 @@ void InGameScene::Draw() const
 
 	//Player::GetInstance()->Draw();
 
-	DrawFormatString(10, 10, GetColor(255, 255, 255), "インゲームシーン");
-	DrawFormatString(70, 360, GetColor(255, 255, 255), "UI");
+	//DrawFormatString(10, 10, GetColor(255, 255, 255), "インゲームシーン");
 
 	// ターン情報表示
 	TurnManager* turnManager = TurnManager::GetInstance();
@@ -83,7 +82,41 @@ void InGameScene::Draw() const
 
 	const char* turnText = (currentTurn == Turn::Player1) ? "1P" : "2P";
 
-	DrawFormatString(10, 50, GetColor(255, 255, 0), "Turn: %s", turnText);
+	DrawFormatString(10, 10, GetColor(255, 255, 0), "ターン: %s", turnText);
+
+	// プレイヤー1のアイコン描画
+	if (currentTurn == Turn::Player1) {
+
+		for (int i = 0; i < player1->GetPassCount(); ++i) {
+			DrawFormatString(5, 440, GetColor(255, 255, 255), "パス:");
+
+			int x = 80 + i * 40; // 左側に並べる
+			int y = 415; // 画面の下部に配置
+			DrawExtendGraph(x, y, x + 90, y + 90, pass_icon_image, TRUE);
+		}
+
+		for (int i = 0; i < player1->GetHealCount(); ++i) {
+			int x = 50 + i * (90 + 10);
+			int y = 370; // パスアイコンの少し下に配置
+			DrawExtendGraph(x, y, x + 64, y + 64, heal_icon_image, TRUE);
+		}
+	}
+	// プレイヤー2のアイコン描画
+	if (currentTurn == Turn::Player2) {
+
+		for (int i = 0; i < player2->GetPassCount(); ++i) {
+			DrawFormatString(450, 440, GetColor(255, 255, 255), "パス:");
+
+			int x = 525 + i * 40;
+			int y = 415; 
+			DrawExtendGraph(x, y, x + 90, y + 90, pass_icon_image, TRUE);
+		}
+		for (int i = 0; i < player2->GetHealCount(); ++i) {
+			int x = 495 + i * (90 + 10);
+			int y = 370;
+			DrawExtendGraph(x, y, x + 64, y + 64, heal_icon_image, TRUE);
+		}
+	}
 
 	if (turnManager->ShowTurnMessage()) {
 		const std::string& msg = turnManager->GetTurnMessage();

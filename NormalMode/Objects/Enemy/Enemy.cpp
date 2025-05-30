@@ -27,6 +27,11 @@ void Enemy::Initialize() {
    bodyParts.emplace_back("Head", Vector2D(295, 60), 52, 52);
    bodyParts.emplace_back("Body", Vector2D(295, 180), 52, 58);
    bodyParts.emplace_back("Legs", Vector2D(295, 420), 52, 52);
+
+   //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
+
+   effectActive = false;
+   alphaValue = 255;
 }
 
 void Enemy::Update() {
@@ -72,6 +77,17 @@ void Enemy::Draw() const {
         }
 
         DrawFormatString(400, 50, GetColor(255, 255, 255), "HP: %d", hit_point);
+
+        // 攻撃エフェクトを描画（パーツが選択されていれば）
+        if (effectActive) {
+            const auto& targetPart = bodyParts[selectedPartIndex];
+
+            SetDrawBlendMode(DX_BLENDMODE_ALPHA, alphaValue); // 透明度調整
+            DrawGraph(targetPart.GetPosition().x, targetPart.GetPosition().y, attack_effect_image, TRUE);
+            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+           
+        }
     }
 
 }

@@ -20,6 +20,11 @@ private:
 	int num_image;
 	int num_time;
 	int back_ground_image;	//”wŒi‰æ‘œ
+	int heal_icon_image;	
+	int pass_icon_image;	
+
+	int iconWidth = 90;
+	int iconHeight =90;
 
 
 
