@@ -19,7 +19,7 @@ void InGameScene::Initialize()
 	std::vector<int> tmp;
 
 
-	back_ground_image = rm->GetImageResource("Resource/Images/concrete-closed-room02.jpg")[0];
+	back_ground_image = rm->GetImageResource("Resource/Images/concrete-closed-room3.jpg")[0];
 
 	pass_icon_image = rm->GetImageResource("Resource/Images/pass.png")[0];
 	heal_icon_image = rm->GetImageResource("Resource/Images/heal.png")[0];
