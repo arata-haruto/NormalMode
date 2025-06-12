@@ -6,10 +6,73 @@
 #include "../TurnManager.h"
 #include "DxLib.h"
 
+#include <cmath> // std::sinのため
+#include <random> // より良い乱数生成のため
+#include <chrono> // std::random_deviceのシードのため
+
 Enemy* Enemy::instance = nullptr;
 
-Enemy::Enemy() : hit_point(100), selectedPartIndex(0)
+namespace {
+    const int ENEMY_INITIAL_HP = 100; // 敵の初期HP
+    const float SHAKE_DURATION_SECONDS = 0.25f; // 揺れる時間 (秒)
+    const float SHAKE_MAGNITUDE = 5.0f;       // 揺れ幅 (ピクセル)
+    const float SHAKE_FREQUENCY = 40.0f;      // 揺れの周波数 (大きいほど速く揺れる)
+
+    // 敵のベース描画位置
+    const Vector2D ENEMY_BASE_DRAW_POS = { 400, 0 };
+
+    // 部位の相対位置 (敵のベース位置からのオフセット)
+    // 敵画像の中央付近を基準に調整
+    const Vector2D HEAD_RELATIVE_POS = { 215, 60 }; // 615 - 400 = 215
+    const Vector2D BODY_RELATIVE_POS = { 215, 180 }; // 615 - 400 = 215
+    const Vector2D LEGS_RELATIVE_POS = { 215, 420 }; // 615 - 400 = 215
+    const Vector2D DEBUG_RELATIVE_POS = { 215, 490 }; // 615 - 400 = 215
+
+    // 部位のサイズ
+    const int HEAD_WIDTH = 52;
+    const int HEAD_HEIGHT = 52;
+    const int BODY_WIDTH = 52;
+    const int BODY_HEIGHT = 58;
+    const int LEGS_WIDTH = 52;
+    const int LEGS_HEIGHT = 52;
+    const int DEBUG_WIDTH = 52;
+    const int DEBUG_HEIGHT = 52;
+
+    // 部位のダメージ範囲
+    const int HEAD_DMG_MIN = 10;
+    const int HEAD_DMG_MAX = 20;
+    const int BODY_DMG_MIN = 7;
+    const int BODY_DMG_MAX = 12;
+    const int LEGS_DMG_MIN = 1;
+    const int LEGS_DMG_MAX = 6;
+    const int DEBUG_DMG_MIN = 100;
+    const int DEBUG_DMG_MAX = 100; // デバッグ用
+
+    // 表示関連
+    const int HP_DISPLAY_X = 1100;
+    const int HP_DISPLAY_Y = 50;
+    const int SELECTED_PART_NAME_X = 100;
+    const int SELECTED_PART_NAME_Y = 80;
+    const int ARROW_OFFSET_X = 85;
+    const int ARROW_OFFSET_Y = 20;
+
+    // エフェクト描画位置調整用
+    const int ATTACK_EFFECT_WIDTH_HALF = 192 / 2;
+    const int ATTACK_EFFECT_HEIGHT_HALF = 192 / 2;
+}
+
+Enemy::Enemy() :
+    hit_point(ENEMY_INITIAL_HP),
+    selectedPartIndex(0),
+    is_destroyed(false),
+    image(-1),
+    is_shaking(false),
+    shake_timer(0.0f),
+    shake_duration(SHAKE_DURATION_SECONDS),
+    shake_magnitude(SHAKE_MAGNITUDE),
+    base_pos(ENEMY_BASE_DRAW_POS)
 {
+  
 }
 
 Enemy::~Enemy()
@@ -25,24 +88,24 @@ void Enemy::Initialize() {
         DrawString(500, 100, "画像の読み込みに失敗しました", GetColor(255, 0, 0));
     }
 
-    bodyParts.emplace_back("Head", Vector2D(615, 60), 52, 52, 10, 20);  // 高ダメージ
-    bodyParts.emplace_back("Body", Vector2D(615, 180), 52, 58, 7, 12);   // 中ダメージ
-    bodyParts.emplace_back("Legs", Vector2D(615, 420), 52, 52, 1, 6);   // 低ダメージ
+    hit_point = 100;
+
+    bodyParts.clear();
+    bodyParts.emplace_back("Head", HEAD_RELATIVE_POS, HEAD_WIDTH, HEAD_HEIGHT, HEAD_DMG_MIN, HEAD_DMG_MAX);
+    bodyParts.emplace_back("Body", BODY_RELATIVE_POS, BODY_WIDTH, BODY_HEIGHT, BODY_DMG_MIN, BODY_DMG_MAX);
+    bodyParts.emplace_back("Legs", LEGS_RELATIVE_POS, LEGS_WIDTH, LEGS_HEIGHT, LEGS_DMG_MIN, LEGS_DMG_MAX);
+    bodyParts.emplace_back("Debug", DEBUG_RELATIVE_POS, DEBUG_WIDTH, DEBUG_HEIGHT, DEBUG_DMG_MIN, DEBUG_DMG_MAX);
 
 
-    bodyParts.emplace_back("Debug", Vector2D(615, 490), 52, 52, 100, 100);   //デバッグ用
+    //base_pos = { 400, 0 };
 
-
-    base_pos = { 400, 0 };
-
-    //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
 
 }
 
 void Enemy::Update() {
     InputManager* input = InputManager::GetInstance();
     TurnManager* turnManager = TurnManager::GetInstance();
-
+    float deltaTime = 1.0f / 60.0f;
 
     // ターン切り替え演出中は操作できない
     if (turnManager->ShowTurnMessage()) {
@@ -50,8 +113,8 @@ void Enemy::Update() {
     }
 
     if (is_shaking) {
-        shake_timer--;
-        if (shake_timer <= 0) {
+        shake_timer -= deltaTime;
+        if (shake_timer <= 0.0f) {
             is_shaking = false;
         }
     }
@@ -74,9 +137,17 @@ void Enemy::Draw() const {
 
     Vector2D draw_pos = base_pos;
 
+    // 揺れエフェクトの適用
     if (is_shaking) {
-        int offset = (rand() % 3 - 1) * static_cast<int>(shake_magnitude);  // -1, 0, 1のどれか
-        draw_pos.x += offset;
+        // 時間に基づいて揺れを決定論的に計算
+        float current_shake_progress = 1.0f - (shake_timer / SHAKE_DURATION_SECONDS); // 0.0 -> 1.0
+        // sin波を利用してスムーズな揺れを表現
+        float offset_x = shake_magnitude * std::sin(current_shake_progress * SHAKE_FREQUENCY);
+        // 今回はY軸の揺れはなし
+        // float offset_y = shake_magnitude * std::cos(current_shake_progress * SHAKE_FREQUENCY * 0.5f);
+
+        draw_pos.x += offset_x;
+        // draw_pos.y += offset_y;
     }
 
     DrawGraph(static_cast<int>(draw_pos.x), static_cast<int>(draw_pos.y), image, TRUE);
@@ -93,7 +164,7 @@ void Enemy::Draw() const {
                 // 選択中のパーツは色を赤にする
                 color = GetColor(255, 0, 0);
 
-                int arrowX = static_cast<int>(part.GetPosition().x + part.GetWidth() / 2) - 8;
+                int arrowX = static_cast<int>(part.GetPosition().x + part.GetWidth() / 2) - 85;
                 int arrowY = static_cast<int>(part.GetPosition().y) - 20;
                 DrawString(arrowX, arrowY, "→", GetColor(255, 0, 0));
                
@@ -104,13 +175,25 @@ void Enemy::Draw() const {
             }
 
             // パーツの矩形を描画
-            DrawBox(part.GetPosition().x, part.GetPosition().y,
-                part.GetPosition().x + part.GetWidth(), part.GetPosition().y + part.GetHeight(),
+            DrawBox(static_cast<int>(draw_pos.x + part.GetPosition().x),
+                static_cast<int>(draw_pos.y + part.GetPosition().y),
+                static_cast<int>(draw_pos.x + part.GetPosition().x + part.GetWidth()),
+                static_cast<int>(draw_pos.y + part.GetPosition().y + part.GetHeight()),
                 color, FALSE);
         }
        
 
-        DrawFormatString(1100, 50, GetColor(255, 255, 255), "HP: %d", hit_point);
+        DrawFormatString(HP_DISPLAY_X, HP_DISPLAY_Y, GetColor(255, 255, 255), "HP: %d", hit_point);
+
+
+        if (selectedPartIndex >= 0 && selectedPartIndex < bodyParts.size()) {
+            const BodyPart& selectedPart = bodyParts[selectedPartIndex];
+
+            if (selectedPartIndex >= 0 && selectedPartIndex < bodyParts.size()) {
+                const BodyPart& selectedPart = bodyParts[selectedPartIndex];
+                DrawFormatString(SELECTED_PART_NAME_X, SELECTED_PART_NAME_Y, GetColor(0, 255, 255), "選択部位: %s", selectedPart.GetName().c_str());
+            }
+        }
 
     }
 
@@ -128,6 +211,9 @@ void Enemy::TakeDamage(int damage) {
         hit_point = 0;  
 
     }
+    // 揺れエフェクトを開始
+    is_shaking = true;
+    shake_timer = shake_duration;
 }
 
 bool Enemy::IsDestroyed() const {

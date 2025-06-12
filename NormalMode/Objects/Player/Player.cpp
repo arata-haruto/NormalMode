@@ -34,6 +34,10 @@ void Player::Update() {
     TurnManager* turnManager = TurnManager::GetInstance();
     InputManager* input = InputManager::GetInstance();
 
+    if (turnManager->ShowTurnMessage()) {
+        return;
+    }
+
     if (isHealEffectPlaying)
     {
         healEffectTimer++;
@@ -162,6 +166,7 @@ void Player::Draw() const {
 
     __super::Draw();
 }
+
 
 void Player::Heal(int amount)
 {

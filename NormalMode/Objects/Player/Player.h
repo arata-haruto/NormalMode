@@ -56,4 +56,6 @@ public:
     { return healCount; }
 
     bool IsDestroyed() const;
+
+    void Control();
 };
