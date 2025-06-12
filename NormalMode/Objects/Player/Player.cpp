@@ -19,7 +19,7 @@ void Player::Initialize()
     ResourceManager* rm = ResourceManager::GetInstance();
 
     heal_sound = rm->GetSoundResource("Resource/Sound/ƒQ[ƒW‰ñ•œ1.wav");
-    pass_sound = rm->GetSoundResource("Resource/Sound/•Ú‚ğU‚è‰ñ‚·1.wav");
+    pass_sound = rm->GetSoundResource("Resource/Sound/•Ú‚ğU‚è‰ñ‚·1.mp3");
     attack_sound = rm->GetSoundResource("Resource/Sound/Œ•‚Åa‚é2.wav");
     beep_sound = rm->GetSoundResource("Resource/Sound/ƒr[ƒv‰¹1.wav");
 

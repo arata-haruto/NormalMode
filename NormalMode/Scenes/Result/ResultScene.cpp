@@ -41,9 +41,9 @@ void ResultScene::Draw() const
         ClearDrawScreen();
 
         SetFontSize(40);
-        DrawFormatString(200, 200, GetColor(255, 255, 255), "RESULT");
+        DrawFormatString(550, 200, GetColor(255, 255, 255), "RESULT");
         SetFontSize(20);
-        DrawFormatString(150, 300, GetColor(255, 255, 255), "スペースキー/Aボタンを押して終了");
+        DrawFormatString(450, 300, GetColor(255, 255, 255), "スペースキー/Aボタンを押して終了");
     }
 }
 

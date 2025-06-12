@@ -32,8 +32,17 @@ void InGameScene::Initialize()
 	player2->Initialize();
 	//LoadStageMapCSV();
 
+	// 警告演出の初期化
+	warning_effect_active = false;
+	warning_timer = 0.0f;
+	result_reserved = false;
+
 	//SEを読み込む
-	//mainbgm = rm->GetSoundResource("Resource/Sounds/BGM/mainbgm.mp3");
+	mainbgm = rm->GetSoundResource("Resource/Sound/BGM/mainbgm.wav");
+	warning_sound = rm->GetSoundResource("Resource/Sound/Warning.mp3");
+
+	ChangeVolumeSoundMem(150, mainbgm);
+	PlaySoundMem(mainbgm, DX_PLAYTYPE_LOOP);
 }
 
 eSceneType InGameScene::Update(float delta_second)
@@ -53,9 +62,27 @@ eSceneType InGameScene::Update(float delta_second)
 	Turn currentTurn = turnManager->GetCurrentTurn();
 
 
+	// 警告演出中のタイマー処理
+	if(warning_effect_active)
+	{
+		warning_timer += delta_second;
+		if (warning_timer >= warning_duration)
+		{
+			warning_effect_active = false;
+			return eSceneType::eResult;
+		}
+	
+		return GetNowSceneType();
+	}
+
 	if (Enemy::GetInstance()->IsDestroyed())
 	{
-		return eSceneType::eResult;
+		// 警告演出を開始
+		warning_effect_active = true;
+		warning_timer = 0.0f; // 1秒点滅
+		result_reserved = true;
+		PlaySoundMem(warning_sound, DX_PLAYTYPE_BACK);
+		//return eSceneType::eResult;
 	}
 
 	turnManager->Update(delta_second);
@@ -131,8 +158,8 @@ void InGameScene::Draw() const
 		const std::string& msg = turnManager->GetTurnMessage();
 
 		// 画面中央にテキスト表示
-		int screenWidth = 640;
-		int screenHeight = 480;
+		int screenWidth = 1280;
+		int screenHeight = 720;
 
 		int textX = screenWidth / 2 - 80;
 		int textY = screenHeight / 2 - 20;
@@ -141,6 +168,16 @@ void InGameScene::Draw() const
 		DrawString(textX, textY, msg.c_str(), GetColor(255, 255, 255));
 
 		__super::Draw();
+	}
+
+	if (warning_effect_active) {
+		ClearDrawScreen();
+		DrawGraph(0, 0, back_ground_image, TRUE);
+
+		int alpha = static_cast<int>((sin(warning_timer * 5.0f) + 1.0f) * 0.5f * 150);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		DrawBox(0, 0, 1280, 720, GetColor(225, 0, 0), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 }
 

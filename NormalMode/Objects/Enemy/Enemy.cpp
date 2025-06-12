@@ -12,23 +12,30 @@ Enemy::Enemy() : hit_point(100), selectedPartIndex(0)
 {
 }
 
-Enemy::~Enemy() 
+Enemy::~Enemy()
 {
 }
 
 void Enemy::Initialize() {
     ResourceManager* rm = ResourceManager::GetInstance();
 
+
     image = rm->GetImageResource("Resource/Images/Doll.png")[0];
-   if (image == -1) {
-    DrawString(100, 100, "画像の読み込みに失敗しました", GetColor(255, 0, 0));
-}
+    if (image == -1) {
+        DrawString(500, 100, "画像の読み込みに失敗しました", GetColor(255, 0, 0));
+    }
 
-   bodyParts.emplace_back("Head", Vector2D(295, 60), 52, 52, 10, 20);  // 高ダメージ
-   bodyParts.emplace_back("Body", Vector2D(295, 180), 52, 58, 7, 12);   // 中ダメージ
-   bodyParts.emplace_back("Legs", Vector2D(295, 420), 52, 52, 1, 6);   // 低ダメージ
+    bodyParts.emplace_back("Head", Vector2D(615, 60), 52, 52, 10, 20);  // 高ダメージ
+    bodyParts.emplace_back("Body", Vector2D(615, 180), 52, 58, 7, 12);   // 中ダメージ
+    bodyParts.emplace_back("Legs", Vector2D(615, 420), 52, 52, 1, 6);   // 低ダメージ
 
-   //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
+
+    bodyParts.emplace_back("Debug", Vector2D(615, 490), 52, 52, 100, 100);   //デバッグ用
+
+
+    base_pos = { 400, 0 };
+
+    //attack_effect_image = rm->GetImageResource("Resource/Effects/slash.png")[0];
 
 }
 
@@ -40,6 +47,13 @@ void Enemy::Update() {
     // ターン切り替え演出中は操作できない
     if (turnManager->ShowTurnMessage()) {
         return;
+    }
+
+    if (is_shaking) {
+        shake_timer--;
+        if (shake_timer <= 0) {
+            is_shaking = false;
+        }
     }
 
     // 部位選択（←→キー）
@@ -54,43 +68,75 @@ void Enemy::Update() {
         SelectNextPart();
     }
 
-    // 攻撃処理
-   /* if (input->GetKeyState(KEY_INPUT_Z) == eInputState::Pressed) {
-        TakeDamage(10);
-        printfDx("%sに攻撃！ Enemy HP: %d\n", bodyParts[selectedPartIndex].GetName().c_str(), hit_point);
-    }*/
 }
 
 void Enemy::Draw() const {
 
+    Vector2D draw_pos = base_pos;
+
+    if (is_shaking) {
+        int offset = (rand() % 3 - 1) * static_cast<int>(shake_magnitude);  // -1, 0, 1のどれか
+        draw_pos.x += offset;
+    }
+
+    DrawGraph(static_cast<int>(draw_pos.x), static_cast<int>(draw_pos.y), image, TRUE);
+
     if (!IsDestroyed()) {
-        DrawGraph(80, 0, image, TRUE);
+        DrawGraph(400, 0, image, TRUE);
 
         for (int i = 0; i < bodyParts.size(); ++i) {
             const auto& part = bodyParts[i];
-            unsigned int color = (i == selectedPartIndex) ? GetColor(255, 0, 0) : GetColor(255, 255, 255);
+            unsigned int color;
+
+            // 選択中のパーツかどうかを判断
+            if (i == selectedPartIndex) {
+                // 選択中のパーツは色を赤にする
+                color = GetColor(255, 0, 0);
+
+                int arrowX = static_cast<int>(part.GetPosition().x + part.GetWidth() / 2) - 8;
+                int arrowY = static_cast<int>(part.GetPosition().y) - 20;
+                DrawString(arrowX, arrowY, "→", GetColor(255, 0, 0));
+               
+            }
+            else {
+                // 非選択のパーツは元の色
+                color = GetColor(255, 255, 255);
+            }
+
+            // パーツの矩形を描画
             DrawBox(part.GetPosition().x, part.GetPosition().y,
                 part.GetPosition().x + part.GetWidth(), part.GetPosition().y + part.GetHeight(),
                 color, FALSE);
         }
+       
 
-        DrawFormatString(400, 50, GetColor(255, 255, 255), "HP: %d", hit_point);
+        DrawFormatString(1100, 50, GetColor(255, 255, 255), "HP: %d", hit_point);
 
     }
 
 }
 
 void Enemy::Finalize() {
-  
+
 }
 
 void Enemy::TakeDamage(int damage) {
     hit_point -= damage;
-    if (hit_point < 0) hit_point = 0;
+    is_shaking = true;
+    shake_timer = shake_duration;
+    if (hit_point <= 0 && !IsDestroyed()) {
+        hit_point = 0;  
+
+    }
 }
 
 bool Enemy::IsDestroyed() const {
-    return hit_point <= 0;
+    if(hit_point <= 0) {
+       
+        
+        return true;
+    }
+    return false;
 }
 
 int Enemy::GetHitPoint() const {

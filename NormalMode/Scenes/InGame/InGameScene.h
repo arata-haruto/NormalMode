@@ -26,7 +26,16 @@ private:
 	int iconWidth = 90;
 	int iconHeight =90;
 
+	int mainbgm;//ƒQ[ƒ€ƒƒCƒ“‚ÌBG‚l
+	int warning_sound;
 
+
+	bool result_reserved = false;
+	const float warning_duration = 2.0f;
+	float warning_timer = 0.0f;
+	bool is_warning = false;
+	bool warning_effect_active = false;
+	bool go_to_result = false;
 
 public:
 	virtual void Initialize() override;

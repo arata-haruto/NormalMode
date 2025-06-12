@@ -74,7 +74,7 @@ void TitleScene::Draw() const
 
 	SetFontSize(60);
 
-	DrawFormatString(70, 100, GetColor(255, 255, 255), "Lethal Judge");
+	DrawFormatString(500, 100, GetColor(255, 255, 255), "Lethal Judge");
 
 	SetFontSize(40);
 
@@ -82,27 +82,27 @@ void TitleScene::Draw() const
 	switch (select_menu)
 	{
 	case eNONE:
-		DrawFormatString(210, 200, dropoff_color, "PLAY START");
-		DrawFormatString(210, 250, dropoff_color, "HELP");
-		DrawFormatString(210, 300, dropoff_color, "EXIT");
+		DrawFormatString(510, 350, dropoff_color, "PLAY START");
+		DrawFormatString(510, 400, dropoff_color, "HELP");
+		DrawFormatString(510, 450, dropoff_color, "EXIT");
 		break;
 
 	case ePLAY:
-		DrawFormatString(210, 200, pickup_color, "PLAY START");
-		DrawFormatString(210, 250, dropoff_color, "HELP");
-		DrawFormatString(210, 300, dropoff_color, "EXIT");
+		DrawFormatString(510, 350, pickup_color, "PLAY START");
+		DrawFormatString(510, 400, dropoff_color, "HELP");
+		DrawFormatString(510, 450, dropoff_color, "EXIT");
 		break;
 
 	case eHELP:
-		DrawFormatString(210, 200, dropoff_color, "PLAY START");
-		DrawFormatString(210, 250, pickup_color, "HELP");
-		DrawFormatString(210, 300, dropoff_color, "EXIT");
+		DrawFormatString(510, 350, dropoff_color, "PLAY START");
+		DrawFormatString(510, 400, pickup_color, "HELP");
+		DrawFormatString(510, 450, dropoff_color, "EXIT");
 		break;
 
 	case eEXIT:
-		DrawFormatString(210, 200, dropoff_color, "PLAY START");
-		DrawFormatString(210, 250, dropoff_color, "HELP");
-		DrawFormatString(210, 300, pickup_color, "EXIT");
+		DrawFormatString(510, 350, dropoff_color, "PLAY START");
+		DrawFormatString(510, 400, dropoff_color, "HELP");
+		DrawFormatString(510, 450, pickup_color, "EXIT");
 		break;
 	default:
 		break;
