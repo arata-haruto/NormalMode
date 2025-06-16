@@ -29,6 +29,8 @@ private:
     const float shake_magnitude = 5.0f; // 揺れ幅（ピクセル）
     Vector2D base_pos = { 0, 0 };
 
+    bool isHpHidden;
+
 public:
     Enemy();
     virtual ~Enemy();

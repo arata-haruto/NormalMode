@@ -38,8 +38,8 @@ private:
 	int heal_icon_image;	
 	int pass_icon_image;	
 
-	int iconWidth = 90;
-	int iconHeight =90;
+	int iconWidth = 70;
+	int iconHeight =70;
 
 	int mainbgm;//ƒQ[ƒ€ƒƒCƒ“‚ÌBG‚l
 	int warning_sound;

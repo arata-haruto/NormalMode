@@ -13,6 +13,50 @@
 #include <chrono>
 //#define DEBUG_MODE		(0)
 
+// UIレイアウト
+namespace {
+	const int ICON_SPACING = 1; // アイコン間のスペース
+
+	const int UI_FONT_SIZE = 32;
+
+	// テキストとアイコンの垂直方向の調整オフセット。
+	// フォントサイズとアイコンサイズによって調整が必要です。
+	// テキストの真ん中とアイコンの真ん中を合わせるような計算 (-24) を試しています。
+	const int ICON_TEXT_VERTICAL_ALIGN_OFFSET = -24;
+
+	// プレイヤー1 UIの基準位置 (画面左上)
+	const int P1_UI_BASE_X = 50;
+	const int P1_UI_BASE_Y = 380;
+
+	// プレイヤー2 UIの基準位置 (画面右上。画面幅1280に対して調整)
+	const int P2_UI_BASE_X = 800; // この値を調整して、右端からの距離を調整
+	const int P2_UI_BASE_Y = 380;
+
+	// P1 パス表示位置
+	const int P1_PASS_TEXT_X = P1_UI_BASE_X;
+	const int P1_PASS_TEXT_Y = P1_UI_BASE_Y;
+	const int P1_PASS_ICON_START_X = P1_PASS_TEXT_X + 80; // "パス:" テキストからのオフセット
+	const int P1_PASS_ICON_Y = P1_PASS_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET; // テキストとアイコンの垂直調整
+
+	// P1 回復表示位置
+	const int P1_HEAL_TEXT_X = P1_UI_BASE_X;
+	const int P1_HEAL_TEXT_Y = P1_UI_BASE_Y + 80; // パス行からのYオフセット
+	const int P1_HEAL_ICON_START_X = P1_HEAL_TEXT_X + 80;
+	const int P1_HEAL_ICON_Y = P1_HEAL_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
+
+	// P2 パス表示位置
+	const int P2_PASS_TEXT_X = P2_UI_BASE_X;
+	const int P2_PASS_TEXT_Y = P2_UI_BASE_Y;
+	const int P2_PASS_ICON_START_X = P2_PASS_TEXT_X + 80;
+	const int P2_PASS_ICON_Y = P2_PASS_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
+
+	// P2 回復表示位置
+	const int P2_HEAL_TEXT_X = P2_UI_BASE_X;
+	const int P2_HEAL_TEXT_Y = P2_UI_BASE_Y + 80;
+	const int P2_HEAL_ICON_START_X = P2_HEAL_TEXT_X + 80;
+	const int P2_HEAL_ICON_Y = P2_HEAL_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
+}
+
 InGameScene::InGameScene() :
 	player1(nullptr),
 	player2(nullptr),
@@ -35,10 +79,13 @@ InGameScene::InGameScene() :
 
 void InGameScene::Initialize()
 {
+
 	Enemy::GetInstance()->Initialize();
 	// 背景画像の読み込み
 	ResourceManager* rm = ResourceManager::GetInstance();
 	TurnManager* turnManager = TurnManager::GetInstance();
+
+	turnManager->Reset();
 
 	std::vector<int> tmp;
 
@@ -89,12 +136,7 @@ eSceneType InGameScene::Update(float delta_second)
 
 	Turn currentTurn = turnManager->GetCurrentTurn();
 
-	if (currentTurn == Turn::Player1 && player1) {
-		player1->Update();
-	}
-	else if (currentTurn == Turn::Player2 && player2) {
-		player2->Update();
-	}
+	
 
 	if (turnManager->ShowTurnMessage() && currentGameState != GameState::TransitionToResult){ // turnMessageState != 0 の時にtrueを返す
 		turnManager->Update(delta_second);  
@@ -107,8 +149,8 @@ eSceneType InGameScene::Update(float delta_second)
 	switch (currentGameState) {
 	case GameState::ReadyToStart:
 		// どちらかのコントローラーのスタートボタンまたはEnterキーでゲーム開始
-		if (input->GetKeyState(KEY_INPUT_RETURN) == eInputState::Pressed ||
-			input->GetButtonState(XINPUT_BUTTON_START) == eInputState::Pressed)
+		if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
+			input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
 		{
 			currentGameState = GameState::TurnDeciding; // 先攻後攻決定状態へ
 			//initialTurnDecisionTimer = 2.0f; // 2秒間決定演出を表示
@@ -134,16 +176,25 @@ eSceneType InGameScene::Update(float delta_second)
 		break;
 
 	case GameState::Playing:
+
+		Enemy::GetInstance()->Update(); // 敵の更新
+		if (player1) {
+			player1->Update(); // プレイヤー1の更新
+		}
+		if (player2) {
+			player2->Update(); // プレイヤー2の更新
+		}
+
 		if (Enemy::GetInstance()->IsDestroyed() && !result_reserved)
 		{
 			result_reserved = true; // リザルト遷移予約
+			Turn currentTurn = turnManager->GetCurrentTurn(); // 現在のターンプレイヤーを取得
+			Turn winningPlayer = (currentTurn == Turn::Player1) ? Turn::Player2 : Turn::Player1;
+
+			// リザルトシーンに結果を伝える (false はゲームオーバーではない = 勝利)
+			ResultScene::SetGameResult(false, winningPlayer);
 			StartResultTransition(true); // ゲームオーバー演出を開始
-			// 警告演出を開始
-			//warning_effect_active = true;
-			//warning_timer = 0.0f; // 1秒点滅
-			//result_reserved = true;
-			//PlaySoundMem(warning_sound, DX_PLAYTYPE_BACK);
-			//return eSceneType::eResult;
+			
 		}
 
 		
@@ -187,6 +238,7 @@ eSceneType InGameScene::Update(float delta_second)
 
 void InGameScene::Draw() const
 {
+	SetFontSize(UI_FONT_SIZE);
 	//背景画像の描画;
 	DrawGraph(0, 0, back_ground_image, TRUE);
 
@@ -210,52 +262,40 @@ void InGameScene::Draw() const
 
 		// プレイヤー1のアイコン描画
 		if (currentTurn == Turn::Player1) {
-
+			// パスアイコンのテキストをループ外で一度だけ描画
+			DrawFormatString(P1_PASS_TEXT_X, P1_PASS_TEXT_Y, GetColor(255, 255, 255), "パス:");
 			for (int i = 0; i < player1->GetPassCount(); ++i) {
-				DrawFormatString(100, 100, GetColor(255, 255, 255), "パス:");
-				int x = 180 + i * (iconWidth + 10); // アイコンの間隔調整
-				int y = 75;
+				int x = P1_PASS_ICON_START_X + i * (iconWidth + ICON_SPACING);
+				int y = P1_PASS_ICON_Y;
 				DrawExtendGraph(x, y, x + iconWidth, y + iconHeight, pass_icon_image, TRUE);
 			}
+			// 回復アイコンのテキストをループ外で一度だけ描画
+			DrawFormatString(P1_HEAL_TEXT_X, P1_HEAL_TEXT_Y, GetColor(255, 255, 255), "回復:");
 			for (int i = 0; i < player1->GetHealCount(); ++i) {
-				DrawFormatString(100, 150, GetColor(255, 255, 255), "回復:");
-				int x = 180 + i * (64 + 10); // アイコンの間隔調整
-				int y = 125;
-				DrawExtendGraph(x, y, x + 64, y + 64, heal_icon_image, TRUE);
+				int x = P1_HEAL_ICON_START_X + i * (iconWidth + ICON_SPACING);
+				int y = P1_HEAL_ICON_Y;
+				DrawExtendGraph(x, y, x + iconWidth, y + iconHeight, heal_icon_image, TRUE);
 			}
 		}
-		// プレイヤー2のアイコン描画
-		if (currentTurn == Turn::Player2) {
-
+		// ★修正: プレイヤー2のスキルアイコン描画
+		else if (currentTurn == Turn::Player2) {
+			// パスアイコンのテキストをループ外で一度だけ描画
+			DrawFormatString(P2_PASS_TEXT_X, P2_PASS_TEXT_Y, GetColor(255, 255, 255), "パス:");
 			for (int i = 0; i < player2->GetPassCount(); ++i) {
-				DrawFormatString(450, 100, GetColor(255, 255, 255), "パス:");
-				int x = 525 + i * (iconWidth + 10); // アイコンの間隔調整
-				int y = 75;
+				int x = P2_PASS_ICON_START_X + i * (iconWidth + ICON_SPACING);
+				int y = P2_PASS_ICON_Y;
 				DrawExtendGraph(x, y, x + iconWidth, y + iconHeight, pass_icon_image, TRUE);
 			}
+			// 回復アイコンのテキストをループ外で一度だけ描画
+			DrawFormatString(P2_HEAL_TEXT_X, P2_HEAL_TEXT_Y, GetColor(255, 255, 255), "回復:");
 			for (int i = 0; i < player2->GetHealCount(); ++i) {
-				DrawFormatString(450, 150, GetColor(255, 255, 255), "回復:");
-				int x = 525 + i * (64 + 10); // アイコンの間隔調整
-				int y = 125;
-				DrawExtendGraph(x, y, x + 64, y + 64, heal_icon_image, TRUE);
+				int x = P2_HEAL_ICON_START_X + i * (iconWidth + ICON_SPACING);
+				int y = P2_HEAL_ICON_Y;
+				DrawExtendGraph(x, y, x + iconWidth, y + iconHeight, heal_icon_image, TRUE);
 			}
 		}
 	}
-	//if (turnManager->ShowTurnMessage()) {
-	//	const std::string& msg = turnManager->GetTurnMessage();
-
-	//	// 画面中央にテキスト表示
-	//	int screenWidth = 1280;
-	//	int screenHeight = 720;
-
-	//	int textX = screenWidth / 2 - 80;
-	//	int textY = screenHeight / 2 - 20;
-
-	//	DrawBox(textX - 10, textY - 10, textX + 200, textY + 40, GetColor(0, 0, 0), TRUE);
-	//	DrawString(textX, textY, msg.c_str(), GetColor(255, 255, 255));
-
-	//	__super::Draw();
-	//}
+	
 
 	if (currentGameState == GameState::ReadyToStart) {
 		// 全画面を黒くするオーバーレイを描画して、背景のごちゃつきを隠す
@@ -324,12 +364,10 @@ void InGameScene::StartResultTransition(bool gameOver) {
 	}
 
 	// ゲームオーバー/勝利音の再生 (必要であれば)
-	// ResourceManager* rm = ResourceManager::GetInstance();
-	// if (isGameOver) {
-	//     PlaySoundMem(rm->GetSoundResource("Resource/Sound/se_gameover.ogg")[0], DX_PLAYTYPE_NORMAL);
-	// } else {
-	//     PlaySoundMem(rm->GetSoundResource("Resource/Sound/se_win.ogg")[0], DX_PLAYTYPE_NORMAL);
-	// }
+	 ResourceManager* rm = ResourceManager::GetInstance();
+	 if (isGameOver) {
+	     PlaySoundMem(rm->GetSoundResource("Resource/Sound/Warning-Siren05-03(Fast-Short).mp3"), DX_PLAYTYPE_NORMAL);
+	 }
 }
 
 void InGameScene::UpdateTransition(float delta_second) {

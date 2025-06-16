@@ -24,6 +24,7 @@ private:
 public:
     static TurnManager* GetInstance();
     Turn GetCurrentTurn() const;
+    void Reset();
     void NextTurn();
 
     void Update(float deltaTime);

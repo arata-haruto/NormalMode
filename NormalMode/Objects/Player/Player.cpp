@@ -125,9 +125,9 @@ void Player::Draw() const {
     
     if (isHealEffectPlaying)
     {
-        const int frameWidth = 240;  // 1フレームの横幅
-        const int frameHeight = 480; // 1フレームの高さ
-        const int columns = 10;      // 横に10個フレームが並んでいる
+        const int frameWidth = 240; 
+        const int frameHeight = 480; 
+        const int columns = 10;     
 
         int fx = (healEffectFrame % columns) * frameWidth;
         int fy = 0;
@@ -178,11 +178,11 @@ void Player::Heal(int amount)
         isHealEffectPlaying = true;
         healEffectTimer = 0;
         healEffectFrame = 0;
-        healEffectPosition = {205, 40};
+        healEffectPosition = {515, 40};
 
         healCount--;
         
-        //printfDx("Player %d が回復！ 残り %d 回\n", playerID == PlayerID::Player1 ? 1 : 2, healCount);
+        
     }
     else {
         PlaySoundMem(beep_sound, DX_PLAYTYPE_BACK); // 使用不可の通知音
