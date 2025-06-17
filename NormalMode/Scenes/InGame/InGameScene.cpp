@@ -15,42 +15,34 @@
 
 // UIレイアウト
 namespace {
-	const int ICON_SPACING = 1; // アイコン間のスペース
+	const int ICON_SPACING = 1; 
 
 	const int UI_FONT_SIZE = 32;
 
-	// テキストとアイコンの垂直方向の調整オフセット。
-	// フォントサイズとアイコンサイズによって調整が必要です。
-	// テキストの真ん中とアイコンの真ん中を合わせるような計算 (-24) を試しています。
 	const int ICON_TEXT_VERTICAL_ALIGN_OFFSET = -24;
 
-	// プレイヤー1 UIの基準位置 (画面左上)
 	const int P1_UI_BASE_X = 50;
 	const int P1_UI_BASE_Y = 380;
 
-	// プレイヤー2 UIの基準位置 (画面右上。画面幅1280に対して調整)
-	const int P2_UI_BASE_X = 800; // この値を調整して、右端からの距離を調整
+	
+	const int P2_UI_BASE_X = 800;
 	const int P2_UI_BASE_Y = 380;
 
-	// P1 パス表示位置
 	const int P1_PASS_TEXT_X = P1_UI_BASE_X;
 	const int P1_PASS_TEXT_Y = P1_UI_BASE_Y;
-	const int P1_PASS_ICON_START_X = P1_PASS_TEXT_X + 80; // "パス:" テキストからのオフセット
-	const int P1_PASS_ICON_Y = P1_PASS_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET; // テキストとアイコンの垂直調整
+	const int P1_PASS_ICON_START_X = P1_PASS_TEXT_X + 80; 
+	const int P1_PASS_ICON_Y = P1_PASS_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
 
-	// P1 回復表示位置
 	const int P1_HEAL_TEXT_X = P1_UI_BASE_X;
-	const int P1_HEAL_TEXT_Y = P1_UI_BASE_Y + 80; // パス行からのYオフセット
+	const int P1_HEAL_TEXT_Y = P1_UI_BASE_Y + 80;
 	const int P1_HEAL_ICON_START_X = P1_HEAL_TEXT_X + 80;
 	const int P1_HEAL_ICON_Y = P1_HEAL_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
 
-	// P2 パス表示位置
 	const int P2_PASS_TEXT_X = P2_UI_BASE_X;
 	const int P2_PASS_TEXT_Y = P2_UI_BASE_Y;
 	const int P2_PASS_ICON_START_X = P2_PASS_TEXT_X + 80;
 	const int P2_PASS_ICON_Y = P2_PASS_TEXT_Y + ICON_TEXT_VERTICAL_ALIGN_OFFSET;
 
-	// P2 回復表示位置
 	const int P2_HEAL_TEXT_X = P2_UI_BASE_X;
 	const int P2_HEAL_TEXT_Y = P2_UI_BASE_Y + 80;
 	const int P2_HEAL_ICON_START_X = P2_HEAL_TEXT_X + 80;
@@ -148,7 +140,6 @@ eSceneType InGameScene::Update(float delta_second)
 
 	switch (currentGameState) {
 	case GameState::ReadyToStart:
-		// どちらかのコントローラーのスタートボタンまたはEnterキーでゲーム開始
 		if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
 			input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
 		{
@@ -177,7 +168,7 @@ eSceneType InGameScene::Update(float delta_second)
 
 	case GameState::Playing:
 
-		Enemy::GetInstance()->Update(); // 敵の更新
+		//Enemy::GetInstance()->Update(); // 敵の更新
 		if (player1) {
 			player1->Update(); // プレイヤー1の更新
 		}
@@ -212,12 +203,12 @@ eSceneType InGameScene::Update(float delta_second)
 		turnManager->Update(delta_second);
 		break;
 
-		if (currentTurn == Turn::Player1 && player1) {
+		/*if (currentTurn == Turn::Player1 && player1) {
 			player1->Update();
 		}
 		else if (currentTurn == Turn::Player2 && player2) {
 			player2->Update();
-		}
+		}*/
 		__super::Update(delta_second);
 
 	case GameState::TransitionToResult:

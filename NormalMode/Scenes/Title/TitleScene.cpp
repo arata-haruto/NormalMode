@@ -15,11 +15,17 @@ void TitleScene::Initialize()
 
 	back_ground_image = rm->GetImageResource("Resource/Images/concrete-closed-room1.jpg")[0];
 
-
-	select_menu = eNONE;
+	select_menu = ePLAY;
 
 	pickup_color = GetColor(255, 0, 0);
 	dropoff_color = GetColor(255, 255, 255);
+
+	cursor_sound = rm->GetSoundResource("Resource/Sound/カーソル移動5.mp3");
+	decision_sound = rm->GetSoundResource("Resource/Sound/決定ボタンを押す7.mp3");
+
+	if (cursor_sound == -1 || decision_sound == -1) {
+		printfDx("Error: Failed to load TitleScene sounds.\n");
+	}
 }
 
 eSceneType TitleScene::Update(float delta_second)
@@ -31,6 +37,7 @@ eSceneType TitleScene::Update(float delta_second)
 		input->GetButtonState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::Pressed)
 	{
 		SetDownSelectMenuType();
+		PlaySoundMem(cursor_sound, DX_PLAYTYPE_BACK);
 	}
 
 	//上キーが押された場合
@@ -38,12 +45,14 @@ eSceneType TitleScene::Update(float delta_second)
 		input->GetButtonState(XINPUT_BUTTON_DPAD_UP) == eInputState::Pressed)
 	{
 		SetUpSelectMenuType();
+		PlaySoundMem(cursor_sound, DX_PLAYTYPE_BACK);
 	}
 
 	//決定処理
 	if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
 		input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
 	{
+		PlaySoundMem(decision_sound, DX_PLAYTYPE_BACK);
 		switch (select_menu)
 		{
 		case ePLAY:
@@ -114,6 +123,20 @@ void TitleScene::Draw() const
 void TitleScene::Finalize()
 {
 	__super::Finalize();
+	
+	if (back_ground_image != -1) {
+		DeleteGraph(back_ground_image);
+		back_ground_image = -1;
+	}
+	
+	if (cursor_sound != -1) {
+		DeleteSoundMem(cursor_sound);
+		cursor_sound = -1;
+	}
+	if (decision_sound != -1) {
+		DeleteSoundMem(decision_sound);
+		decision_sound = -1;
+	}
 }
 
 eSceneType TitleScene::GetNowSceneType() const

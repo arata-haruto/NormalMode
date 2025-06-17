@@ -24,6 +24,9 @@ public:
 	int back_ground_image;	//”wŒi‰æ‘œ
 	eSelectMenu select_menu;
 
+	int cursor_sound;
+	int decision_sound;
+
 	virtual void Initialize() override;
 	virtual eSceneType Update(float delta_second) override;
 	virtual void Draw() const override;

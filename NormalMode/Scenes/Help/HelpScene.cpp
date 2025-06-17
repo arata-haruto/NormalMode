@@ -80,7 +80,7 @@ void HelpScene::Draw() const
     current_y += LINE_SPACING;
     DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Xボタン：パス");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Aボタ）：決定");
+    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Aボタン：決定");
     current_y += LINE_SPACING * 2;
 
     
