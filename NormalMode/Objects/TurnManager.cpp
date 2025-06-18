@@ -4,7 +4,7 @@
 TurnManager* TurnManager::instance = nullptr;
 
 TurnManager::TurnManager() : currentTurn(Turn::Player1), turnChanged(false), displayTimer(0.0f), turnMessageAlpha(0),
-turnMessageY(300), // 初期Y座標（画面中央付近）
+turnMessageY(200),
 turnMessageState(0), // 0:非表示
 turnMessageAnimationTimer(0)
 {
@@ -87,13 +87,13 @@ void TurnManager::SetInitialTurn(Turn initialPlayer) {
 void TurnManager::UpdateTurnMessageAnimation(float deltaTime) {
     if (turnMessageState == 1) { 
         turnMessageAnimationTimer--;
-        turnMessageAlpha = static_cast<int>(255 * (1.0f - static_cast<float>(turnMessageAnimationTimer) / 60.0f));
+        turnMessageAlpha = static_cast<int>(200 * (1.0f - static_cast<float>(turnMessageAnimationTimer) / 60.0f));
         if (turnMessageAnimationTimer <= 0) {
             turnMessageState = 2; 
             turnMessageAnimationTimer = 90; 
         }
         // スライドインアニメーション
-        turnMessageY = 200 + static_cast<int>((static_cast<float>(turnMessageAnimationTimer) / 60.0f) * 100); // 200から300へ
+        turnMessageY = 200 + static_cast<int>((static_cast<float>(turnMessageAnimationTimer) / 60.0f) * 100);
 
     }
     else if (turnMessageState == 2) {
@@ -105,14 +105,14 @@ void TurnManager::UpdateTurnMessageAnimation(float deltaTime) {
     }
     else if (turnMessageState == 3) { // フェードアウト
         turnMessageAnimationTimer--;
-        turnMessageAlpha = static_cast<int>(255 * (static_cast<float>(turnMessageAnimationTimer) / 30.0f));
+        turnMessageAlpha = static_cast<int>(200 * (static_cast<float>(turnMessageAnimationTimer) / 30.0f));
         if (turnMessageAnimationTimer <= 0) {
             turnMessageState = 0;
             turnMessageAlpha = 0;
             turnMessageY = 300; 
         }
         // スライドアウトアニメーション
-        turnMessageY = 300 - static_cast<int>((static_cast<float>(turnMessageAnimationTimer) / 30.0f) * 50); // 300から250へ
+        turnMessageY = 300 - static_cast<int>((static_cast<float>(turnMessageAnimationTimer) / 30.0f) * 50); 
     }
 }
 

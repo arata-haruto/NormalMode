@@ -13,7 +13,7 @@ void TitleScene::Initialize()
 	std::vector<int> tmp;
 
 
-	back_ground_image = rm->GetImageResource("Resource/Images/concrete-closed-room1.jpg")[0];
+	back_ground_image = rm->GetImageResource("Resource/Images/Gemini_Generated_Image_xgqrejxgqrejxgqr.jpg")[0];
 
 	select_menu = ePLAY;
 
@@ -81,9 +81,10 @@ void TitleScene::Draw() const
 	//タイトル背景画像の描画;
 	DrawGraph(0, 0, back_ground_image, TRUE);
 
-	SetFontSize(60);
+	ChangeFont("自由の翼フォント");
+	SetFontSize(120);
 
-	DrawFormatString(500, 100, GetColor(255, 255, 255), "Lethal Judge");
+	DrawFormatString(100, 100, GetColor(255, 255, 255), "Lethal Judge");
 
 	SetFontSize(40);
 
@@ -124,7 +125,7 @@ void TitleScene::Finalize()
 {
 	__super::Finalize();
 	
-	if (back_ground_image != -1) {
+	/*if (back_ground_image != -1) {
 		DeleteGraph(back_ground_image);
 		back_ground_image = -1;
 	}
@@ -136,7 +137,7 @@ void TitleScene::Finalize()
 	if (decision_sound != -1) {
 		DeleteSoundMem(decision_sound);
 		decision_sound = -1;
-	}
+	}*/
 }
 
 eSceneType TitleScene::GetNowSceneType() const

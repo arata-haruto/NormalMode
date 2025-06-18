@@ -27,6 +27,8 @@ public:
 	int cursor_sound;
 	int decision_sound;
 
+	int title_font;
+
 	virtual void Initialize() override;
 	virtual eSceneType Update(float delta_second) override;
 	virtual void Draw() const override;
@@ -34,5 +36,8 @@ public:
 	virtual eSceneType GetNowSceneType() const override;
 	void SetUpSelectMenuType();
 	void SetDownSelectMenuType();
+
+private:
+	int change_font_handle;
 };
 

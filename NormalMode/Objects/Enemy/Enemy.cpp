@@ -85,6 +85,7 @@ Enemy::~Enemy()
 void Enemy::Initialize() {
     ResourceManager* rm = ResourceManager::GetInstance();
 
+    part_sound = rm->GetSoundResource("Resource/Sound/ƒJ[ƒ\ƒ‹ˆÚ“®8.mp3");
 
     image = rm->GetImageResource("Resource/Images/Doll.png")[0];
     if (image == -1) {
@@ -127,11 +128,13 @@ void Enemy::Update() {
     if (input->GetKeyState(KEY_INPUT_UP) == eInputState::Pressed ||
         input->GetButtonState(XINPUT_BUTTON_DPAD_UP) == eInputState::Pressed)
     {
+        PlaySoundMem(part_sound, DX_PLAYTYPE_BACK);
         SelectPreviousPart();
     }
     else if (input->GetKeyState(KEY_INPUT_DOWN) == eInputState::Pressed ||
         input->GetButtonState(XINPUT_BUTTON_DPAD_DOWN) == eInputState::Pressed)
     {
+        PlaySoundMem(part_sound, DX_PLAYTYPE_BACK);
         SelectNextPart();
     }
 

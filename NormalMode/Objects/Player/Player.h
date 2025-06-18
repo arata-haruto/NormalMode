@@ -3,6 +3,24 @@
 #include "../Enemy/Enemy.h"
 #include <vector>
 
+struct AttackParticle {
+    Vector2D pos;       // 位置
+    Vector2D vel;       // 速度
+    int life;           // 寿命 (フレーム数)
+    int maxLife;        // 最大寿命 (アルファ値計算用)
+    unsigned int color; // 色
+    int size;           // サイズ (一辺の長さ)
+};
+
+// 回復パーティクルの構造体
+struct HealParticle {
+    Vector2D pos;       // 位置
+    Vector2D vel;       // 速度
+    int life;           // 寿命 (フレーム数)
+    int maxLife;        // 最大寿命
+    unsigned int color; // 色
+    int size;           // サイズ
+};
 
 class Player : public GameObject {
 public:
@@ -37,6 +55,9 @@ private:
     int attackEffectFrame = 0;
     int attackEffectTimer = 0;
     Vector2D attackEffectPosition;
+
+    std::vector<AttackParticle> attackParticles;
+    std::vector<HealParticle> healParticles;
 
 public:
     Player(PlayerID id);

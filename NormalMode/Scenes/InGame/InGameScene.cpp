@@ -109,7 +109,7 @@ void InGameScene::Initialize()
 	ChangeVolumeSoundMem(150, mainbgm);
 	PlaySoundMem(mainbgm, DX_PLAYTYPE_LOOP);
 
-	currentGameState = GameState::ReadyToStart; // 準備完了状態から開始
+	currentGameState = GameState::TurnDeciding; // 準備完了状態から開始
 	initialTurnDecided = false;
 
 	isGameOver = false;
@@ -139,15 +139,15 @@ eSceneType InGameScene::Update(float delta_second)
 	}
 
 	switch (currentGameState) {
-	case GameState::ReadyToStart:
-		if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
-			input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
-		{
-			currentGameState = GameState::TurnDeciding; // 先攻後攻決定状態へ
-			//initialTurnDecisionTimer = 2.0f; // 2秒間決定演出を表示
-			PlaySoundMem(turn_start_sound, DX_PLAYTYPE_NORMAL); // 演出開始SE
-		}
-		break;
+	//case GameState::ReadyToStart:
+	//	if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
+	//		input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
+	//	{
+	//		currentGameState = GameState::TurnDeciding; // 先攻後攻決定状態へ
+	//		//initialTurnDecisionTimer = 2.0f; // 2秒間決定演出を表示
+	//		PlaySoundMem(turn_start_sound, DX_PLAYTYPE_NORMAL); // 演出開始SE
+	//	}
+	//	break;
 
 	case GameState::TurnDeciding:
 		//initialTurnDecisionTimer -= delta_second;
@@ -287,28 +287,6 @@ void InGameScene::Draw() const
 		}
 	}
 	
-
-	if (currentGameState == GameState::ReadyToStart) {
-		// 全画面を黒くするオーバーレイを描画して、背景のごちゃつきを隠す
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200); // 半透明の黒 (0-255, 0が透明, 255が不透明)
-		DrawBox(0, 0, 1280, 720, GetColor(0, 0, 0), TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		SetFontSize(48); // 大きめのフォント
-		const char* msg = "PRESS START BUTTON";
-		int string_width = GetDrawStringWidth(msg, strlen(msg));
-		DrawString(640 - string_width / 2, 300, msg, GetColor(255, 255, 255));
-		SetFontSize(16); // フォントサイズを元に戻す
-	}
-	else if (currentGameState == GameState::TurnDeciding) {
-		// "先攻後攻を決定中..." の固定メッセージは、TurnManagerの演出と重複するため描画しない。
-		// TurnManager::DrawTurnMessageOverlay() が「1Pの先攻！」「2Pの先攻！」をアニメーション表示する。
-	}
-	else if (currentGameState == GameState::TransitionToResult) {
-		// 遷移演出の描画 (他の描画の上に重ねる)
-		DrawTransition();
-	}
-
 	
 	TurnManager::GetInstance()->DrawTurnMessageOverlay();
 
@@ -331,7 +309,7 @@ void InGameScene::Finalize()
 		StopSoundMem(mainbgm);
 	}
 
-	DeleteSoundMem(mainbgm);
+	//DeleteSoundMem(mainbgm);
 	DeleteSoundMem(warning_sound);
 	DeleteSoundMem(turn_start_sound);
 

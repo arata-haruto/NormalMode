@@ -22,6 +22,9 @@ void HelpScene::Initialize()
 	// ”wŒi‰æ‘œ‚Ì“Ç‚İ‚İ
 	ResourceManager* rm = ResourceManager::GetInstance();
 	std::vector<int> tmp;
+
+    cancel_sound = rm->GetSoundResource("Resource/Sound/ƒLƒƒƒ“ƒZƒ‹5.mp3");
+
 	//help_back_image = rm->GetImageResource("Resource/Images/Help.png")[0];
 }
 
@@ -33,6 +36,7 @@ eSceneType HelpScene::Update(float delta_second)
 	if (input->GetKeyState(KEY_INPUT_SPACE) == eInputState::Pressed ||
 		input->GetButtonState(XINPUT_BUTTON_A) == eInputState::Pressed)
 	{
+        PlaySoundMem(cancel_sound, DX_PLAYTYPE_BACK);
 		return eSceneType::eTitle;
 	}
 

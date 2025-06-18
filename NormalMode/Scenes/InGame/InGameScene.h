@@ -10,7 +10,7 @@ class Enemy;
 
 enum class GameState {
 	Initializing,       // 初期化中 (アセットロードなど)
-	ReadyToStart,       // 開始待ち (STARTボタン入力待ち)
+	//ReadyToStart,       // 開始待ち (STARTボタン入力待ち)
 	TurnDeciding,       // 先攻後攻決定中 (ランダム決定と表示)
 	Playing,            // ゲームプレイ中
 	TransitionToResult, // リザルトへの遷移演出中

@@ -15,7 +15,8 @@ private:
     bool is_destroyed;
     int image;
 
-    
+    int part_sound;
+
 
     int attack_effect_image;
     int effectActive;
