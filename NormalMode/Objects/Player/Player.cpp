@@ -172,6 +172,7 @@ void Player::Update() {
         int damage = enemy->GetSelectedPartDamage();  // これを用意する
 
         enemy->TakeDamage(damage);
+
         //printfDx("Player %d が攻撃！\n", playerID == PlayerID::Player1 ? 1 : 2);
         // 攻撃エフェクトを開始
         isAttackEffectPlaying = true;
@@ -192,8 +193,8 @@ void Player::Update() {
         for (int i = 0; i < ATTACK_PARTICLE_COUNT; ++i) {
             AttackParticle p;
             // エフェクトの中心付近からランダムに生成 (元のフレームサイズを使用)
-            p.pos.x = attackEffectPosition.x + (192 / 2) + (vel_dist_x(gen) * 5); // ATTACK_EFFECT_FRAME_WIDTHを直接指定
-            p.pos.y = attackEffectPosition.y + (192 / 2) + (vel_dist_y(gen) * 5); // ATTACK_EFFECT_FRAME_HEIGHTを直接指定
+            p.pos.x = attackEffectPosition.x + (192 / 2) + (vel_dist_x(gen) * 10); // ATTACK_EFFECT_FRAME_WIDTHを直接指定
+            p.pos.y = attackEffectPosition.y + (192 / 2) + (vel_dist_y(gen) * 10); // ATTACK_EFFECT_FRAME_HEIGHTを直接指定
             p.vel.x = vel_dist_x(gen);
             p.vel.y = vel_dist_y(gen);
             p.life = life_dist(gen);
@@ -202,7 +203,7 @@ void Player::Update() {
             p.size = size_dist(gen);
             attackParticles.push_back(p);
         }
-      
+
     }
     for (auto it = attackParticles.begin(); it != attackParticles.end(); ) {
         it->pos.x += it->vel.x;
@@ -254,6 +255,12 @@ void Player::Draw() const {
 
     if (isAttackEffectPlaying)
     {
+        float progress = static_cast<float>(attackEffectTimer) / attack_effect_duration;
+        int alpha = static_cast<int>((1.0f - progress) * 100);
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+        DrawBox(0, 0, 1280, 720, GetColor(225, 0, 0), TRUE); // 全画面を赤く
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
         const int frameWidth = 280;
         const int frameHeight = 280; 
 
@@ -273,7 +280,7 @@ void Player::Draw() const {
     }
 
     for (const auto& p : attackParticles) {
-        SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255.0f * (static_cast<float>(p.life) / p.maxLife))); // 寿命に応じてフェードアウト
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(255.0f * (static_cast<float>(p.life) / p.maxLife)));
         DrawBox(static_cast<int>(p.pos.x - p.size / 2),
             static_cast<int>(p.pos.y - p.size / 2),
             static_cast<int>(p.pos.x + p.size / 2),

@@ -1,5 +1,6 @@
 #pragma once
 #include "../SceneBase.h"
+#include <vector>
 //#include "../../Objects/BackImageBase.h"
 
 enum eSelectMenu
@@ -17,17 +18,20 @@ public:
 	std::vector<int> UI_string;
 	std::vector<int> UI_coin;*/
 
+	int title_font_handle;
+	int menu_font_handle;
+	int menu_font_mini;
+
 	int pickup_color;
 	int dropoff_color;
 	int num_image;
 	int string_image[26];
 	int back_ground_image;	//”wŒi‰æ‘œ
+	int TitleDoll_image;
 	eSelectMenu select_menu;
 
 	int cursor_sound;
 	int decision_sound;
-
-	int title_font;
 
 	virtual void Initialize() override;
 	virtual eSceneType Update(float delta_second) override;
@@ -36,8 +40,5 @@ public:
 	virtual eSceneType GetNowSceneType() const override;
 	void SetUpSelectMenuType();
 	void SetDownSelectMenuType();
-
-private:
-	int change_font_handle;
 };
 

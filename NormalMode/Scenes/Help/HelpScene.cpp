@@ -23,6 +23,10 @@ void HelpScene::Initialize()
 	ResourceManager* rm = ResourceManager::GetInstance();
 	std::vector<int> tmp;
 
+    help_font_handle = CreateFontToHandle(
+        "Resource/JiyunoTsubasa.ttf", 32, 3,
+        DX_FONTTYPE_ANTIALIASING_EDGE, -1, 0, true);
+
     cancel_sound = rm->GetSoundResource("Resource/Sound/キャンセル5.mp3");
 
 	//help_back_image = rm->GetImageResource("Resource/Images/Help.png")[0];
@@ -54,37 +58,37 @@ void HelpScene::Draw() const
 
     // ゲームの概要
     SetFontSize(SECTION_TITLE_FONT_SIZE);
-    DrawFormatString(SECTION_TITLE_OFFSET_X, current_y, GetColor(255, 255, 255), "ゲーム概要");
+    DrawFormatStringToHandle(SECTION_TITLE_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "ゲーム概要");
     current_y += SECTION_TITLE_FONT_SIZE + 10;
 
     SetFontSize(CONTENT_FONT_SIZE);
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・2人のプレイヤーが交互に敵を攻撃していくゲームです");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・2人のプレイヤーが交互に敵を攻撃していくゲームです");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・ただし、敵のHPを0にしたプレイヤーは敗北となり、");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・ただし、敵のHPを0にしたプレイヤーは敗北となり、");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "　もう一方のプレイヤーが勝利します。");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "　もう一方のプレイヤーが勝利します。");
     current_y += LINE_SPACING;
    
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・敵の部位ごとに与えられるダメージが異なります。");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・敵の部位ごとに与えられるダメージが異なります。");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "頭部>胴体＞脚の順でダメージが大きい");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "頭部>胴体＞脚の順でダメージが大きい");
     current_y += LINE_SPACING * 2;
 
     // 操作方法
     SetFontSize(SECTION_TITLE_FONT_SIZE);
-    DrawFormatString(SECTION_TITLE_OFFSET_X, current_y, GetColor(255, 255, 255), "操作方法");
+    DrawFormatStringToHandle(SECTION_TITLE_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "操作方法");
     current_y += SECTION_TITLE_FONT_SIZE + 10;
 
     SetFontSize(CONTENT_FONT_SIZE);
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・十字キー↑↓：部位選択");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・十字キー↑↓：部位選択");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Bボタン：攻撃");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・Bボタン：攻撃");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Yボタン：回復");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・Yボタン：回復");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Xボタン：パス");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・Xボタン：パス");
     current_y += LINE_SPACING;
-    DrawFormatString(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), "・Aボタン：決定");
+    DrawFormatStringToHandle(CONTENT_OFFSET_X, current_y, GetColor(255, 255, 255), help_font_handle, "・Aボタン：決定");
     current_y += LINE_SPACING * 2;
 
     

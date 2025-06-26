@@ -12,8 +12,20 @@ void TitleScene::Initialize()
 	ResourceManager* rm = ResourceManager::GetInstance();
 	std::vector<int> tmp;
 
+	title_font_handle = CreateFontToHandle(
+		"Resource/JiyunoTsubasa.ttf", 120, 3,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 0, true);
 
-	back_ground_image = rm->GetImageResource("Resource/Images/Gemini_Generated_Image_xgqrejxgqrejxgqr.jpg")[0];
+	menu_font_handle = CreateFontToHandle(
+		"Resource/JiyunoTsubasa.ttf", 60, 0,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 0, true);
+
+	menu_font_mini = CreateFontToHandle(
+		"Resource/JiyunoTsubasa.ttf", 30, 0,
+		DX_FONTTYPE_ANTIALIASING_EDGE, -1, 0, true);
+
+	back_ground_image = rm->GetImageResource("Resource/Images/Title.jpg")[0];
+	TitleDoll_image = rm->GetImageResource("Resource/Images/TitleDoll.png")[0];
 
 	select_menu = ePLAY;
 
@@ -22,10 +34,6 @@ void TitleScene::Initialize()
 
 	cursor_sound = rm->GetSoundResource("Resource/Sound/カーソル移動5.mp3");
 	decision_sound = rm->GetSoundResource("Resource/Sound/決定ボタンを押す7.mp3");
-
-	if (cursor_sound == -1 || decision_sound == -1) {
-		printfDx("Error: Failed to load TitleScene sounds.\n");
-	}
 }
 
 eSceneType TitleScene::Update(float delta_second)
@@ -80,44 +88,42 @@ void TitleScene::Draw() const
 {
 	//タイトル背景画像の描画;
 	DrawGraph(0, 0, back_ground_image, TRUE);
+	DrawGraph(550, 0, TitleDoll_image, TRUE);
 
-	ChangeFont("自由の翼フォント");
-	SetFontSize(120);
-
-	DrawFormatString(100, 100, GetColor(255, 255, 255), "Lethal Judge");
-
-	SetFontSize(40);
-
-	//選択されているメニューによって色を変える
-	switch (select_menu)
-	{
-	case eNONE:
-		DrawFormatString(510, 350, dropoff_color, "PLAY START");
-		DrawFormatString(510, 400, dropoff_color, "HELP");
-		DrawFormatString(510, 450, dropoff_color, "EXIT");
-		break;
-
-	case ePLAY:
-		DrawFormatString(510, 350, pickup_color, "PLAY START");
-		DrawFormatString(510, 400, dropoff_color, "HELP");
-		DrawFormatString(510, 450, dropoff_color, "EXIT");
-		break;
-
-	case eHELP:
-		DrawFormatString(510, 350, dropoff_color, "PLAY START");
-		DrawFormatString(510, 400, pickup_color, "HELP");
-		DrawFormatString(510, 450, dropoff_color, "EXIT");
-		break;
-
-	case eEXIT:
-		DrawFormatString(510, 350, dropoff_color, "PLAY START");
-		DrawFormatString(510, 400, dropoff_color, "HELP");
-		DrawFormatString(510, 450, pickup_color, "EXIT");
-		break;
-	default:
-		break;
+	// タイトルロゴの描画
+	// ChangeFont や SetFontSize は不要になります。
+	if (title_font_handle != -1) {
+		DrawFormatStringToHandle(100, 100, GetColor(255, 255, 255), title_font_handle, "Lethal Judge");
+	}
+	else {
+		// フォント読み込みに失敗した場合のフォールバック
+		SetFontSize(120); // DxLib標準フォントのサイズを一時的に設定
+		DrawFormatString(100, 100, GetColor(255, 255, 255), "Lethal Judge");
 	}
 
+	// メニューの描画
+	if (menu_font_handle != -1) {
+		switch (select_menu)
+		{
+		case ePLAY:
+			DrawFormatStringToHandle(210, 350, pickup_color, menu_font_handle, "PLAY START");
+			DrawFormatStringToHandle(210, 420, dropoff_color, menu_font_mini, "HELP");
+			DrawFormatStringToHandle(210, 450, dropoff_color, menu_font_mini, "EXIT");
+			break;
+		case eHELP:
+			DrawFormatStringToHandle(210, 350, dropoff_color, menu_font_mini, "PLAY START");
+			DrawFormatStringToHandle(210, 380, pickup_color, menu_font_handle, "HELP");
+			DrawFormatStringToHandle(210, 450, dropoff_color, menu_font_mini, "EXIT");
+			break;
+		case eEXIT:
+			DrawFormatStringToHandle(210, 350, dropoff_color, menu_font_mini, "PLAY START");
+			DrawFormatStringToHandle(210, 400, dropoff_color, menu_font_mini, "HELP");
+			DrawFormatStringToHandle(210, 430, pickup_color, menu_font_handle, "EXIT");
+			break;
+		default:
+			break;
+		}
+	}
 	__super::Draw();
 }
 

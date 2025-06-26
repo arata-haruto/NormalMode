@@ -56,6 +56,8 @@ private:
     int attackEffectTimer = 0;
     Vector2D attackEffectPosition;
 
+    const float attack_effect_duration = 10.7f;
+
     std::vector<AttackParticle> attackParticles;
     std::vector<HealParticle> healParticles;
 
